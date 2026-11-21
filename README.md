@@ -29,6 +29,8 @@ Para conectar esta pasta a um repositório vazio criado no GitHub, use `git remo
 
 ## Próximas entregas
 
+O cruzamento das duas pesquisas e os critérios de conclusão estão em [Decisões de projeto](docs/decisoes.md).
+
 1. Comparar duas capturas compatíveis. Mostrar A, B e a diferença de P99, 1% low e intervalos lentos por minuto. Uma comparação isolada é descritiva. Para concluir sobre ganho, repetir a mesma cena e medir a variação.
 2. Adicionar inventário de aplicativos com psutil, agrupando processos identificados e registrando CPU, memória e I/O. Começar com seleção manual e coleta em leitura.
 3. Consultar as estatísticas do OBS via WebSocket e comparar renderização e saída em um perfil de stream.
