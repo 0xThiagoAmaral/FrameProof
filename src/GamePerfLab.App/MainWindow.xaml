@@ -1,0 +1,173 @@
+<Window
+    x:Class="GamePerfLab.App.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Game Perf Lab - Comparador A/B de Desempenho">
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Spacing="16" Margin="28" MaxWidth="1080" HorizontalAlignment="Stretch">
+            
+            <!-- Header -->
+            <StackPanel Spacing="4">
+                <TextBlock Text="Game Perf Lab" Style="{StaticResource TitleTextBlockStyle}" FontWeight="Bold" />
+                <TextBlock Text="Diagnóstico offline e comparação A/B de fluidez em jogos (PresentMon)" 
+                           Style="{StaticResource SubtitleTextBlockStyle}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+
+            <!-- Differentiation InfoBar -->
+            <InfoBar IsOpen="True" IsClosable="False" Severity="Informational"
+                     Title="Métrica e Fonte"
+                     Message="Mede intervalos entre chamadas Present da aplicação (CPU/API). Não representam quadros exibidos na tela pelo compositor do Windows (DWM) nem métricas de codificação/composição do OBS Studio." />
+
+            <!-- Error InfoBar -->
+            <InfoBar x:Name="ErrorInfoBar" IsOpen="False" IsClosable="True" Severity="Error" />
+
+            <!-- File Selection Card -->
+            <Border Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="20">
+                <StackPanel Spacing="16">
+                    <TextBlock Text="Seleção de Capturas CSV do PresentMon" Style="{StaticResource SubtitleTextBlockStyle}" />
+
+                    <!-- Capture A -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TxtCaptureA" Header="Captura A (Linha de base)" 
+                                 PlaceholderText="Selecione o primeiro arquivo CSV..." />
+                        <Button Grid.Column="1" Content="Procurar..." VerticalAlignment="Bottom"
+                                Click="BtnBrowseA_Click" Margin="0,0,0,1" />
+                        <Button Grid.Column="2" Content="Usar synthetic.csv (demo)" VerticalAlignment="Bottom"
+                                Click="BtnSampleA_Click" Margin="0,0,0,1" />
+                    </Grid>
+
+                    <!-- Capture B -->
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="TxtCaptureB" Header="Captura B (Ajuste / Otimização)" 
+                                 PlaceholderText="Selecione o segundo arquivo CSV..." />
+                        <Button Grid.Column="1" Content="Procurar..." VerticalAlignment="Bottom"
+                                Click="BtnBrowseB_Click" Margin="0,0,0,1" />
+                        <Button Grid.Column="2" Content="Usar synthetic_optimized.csv (demo)" VerticalAlignment="Bottom"
+                                Click="BtnSampleB_Click" Margin="0,0,0,1" />
+                    </Grid>
+
+                    <!-- Action Buttons -->
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <Button x:Name="BtnCompare" Content="Comparar Capturas (A/B)" 
+                                Style="{StaticResource AccentButtonStyle}" Padding="16,8"
+                                Click="BtnCompare_Click" />
+                        <Button Content="Testar Entrada Incompatível" 
+                                Click="BtnIncompatible_Click" Padding="12,8" />
+                        <ProgressRing x:Name="LoadingRing" IsActive="False" Visibility="Collapsed" Width="24" Height="24" />
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+
+            <!-- Results Section -->
+            <Border x:Name="ResultsCard" Visibility="Collapsed"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1" CornerRadius="8" Padding="20">
+                <StackPanel Spacing="16">
+                    <!-- Session Header -->
+                    <Grid ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="4">
+                            <TextBlock x:Name="TxtResultGame" Text="Jogo: demo.exe" Style="{StaticResource SubtitleTextBlockStyle}" FontWeight="SemiBold" />
+                            <TextBlock x:Name="TxtResultMetric" Text="Métrica: MsBetweenPresents" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                            <TextBlock x:Name="TxtPidChangeNote" Text="PID A: 100 → PID B: 200 (PID mudou - aceito)" 
+                                       Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}" FontWeight="SemiBold" />
+                        </StackPanel>
+                    </Grid>
+
+                    <MenuFlyoutSeparator />
+
+                    <!-- Side by Side Metrics Table -->
+                    <TextBlock Text="Métricas Comparadas Lado a Lado" Style="{StaticResource BodyStrongTextBlockStyle}" />
+
+                    <!-- Table Header -->
+                    <Grid Background="{ThemeResource LayerFillColorDefaultBrush}" Padding="12,8" CornerRadius="4">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2.5*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="1.5*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Métrica" FontWeight="Bold" />
+                        <TextBlock Grid.Column="1" Text="Linha de base (A)" FontWeight="Bold" />
+                        <TextBlock Grid.Column="2" Text="Ajuste (B)" FontWeight="Bold" />
+                        <TextBlock Grid.Column="3" Text="Diferença" FontWeight="Bold" />
+                        <TextBlock Grid.Column="4" Text="Direção" FontWeight="Bold" />
+                    </Grid>
+
+                    <!-- Table Rows -->
+                    <ListView x:Name="ListMetrics" SelectionMode="None">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Padding="12,8" BorderThickness="0,0,0,1" 
+                                      BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="2.5*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="1.5*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="1" Text="{Binding BaselineText}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="2" Text="{Binding ComparisonText}" VerticalAlignment="Center" />
+                                    <TextBlock Grid.Column="3" Text="{Binding DiffText}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                    <Border Grid.Column="4" Background="{Binding DirectionBackgroundBrush}" 
+                                            CornerRadius="4" Padding="6,2" HorizontalAlignment="Left" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding DirectionText}" Foreground="{Binding DirectionForegroundBrush}" 
+                                                   FontWeight="Bold" FontSize="12" />
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+
+                    <!-- Captures Summary Detail -->
+                    <Grid ColumnSpacing="16" Margin="0,12,0,0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Baseline Summary -->
+                        <Border Background="{ThemeResource LayerFillColorDefaultBrush}" Padding="12" CornerRadius="6">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Detalhes da Linha de Base (A)" FontWeight="SemiBold" />
+                                <TextBlock x:Name="TxtSummaryA" TextWrapping="Wrap" FontSize="12" 
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </Border>
+
+                        <!-- Comparison Summary -->
+                        <Border Grid.Column="1" Background="{ThemeResource LayerFillColorDefaultBrush}" Padding="12" CornerRadius="6">
+                            <StackPanel Spacing="4">
+                                <TextBlock Text="Detalhes do Ajuste (B)" FontWeight="SemiBold" />
+                                <TextBlock x:Name="TxtSummaryB" TextWrapping="Wrap" FontSize="12" 
+                                           Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -7,3 +7,13 @@ captures/
 reports/
 *.etl
 *.vpk
+
+# .NET / Visual Studio
+bin/
+obj/
+AppPackages/
+*.pfx
+*.cer
+*.user
+.vs/
+TestResults/

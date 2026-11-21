@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GamePerfLab.App/GamePerfLab.App.csproj" />
+    <Project Path="src/GamePerfLab.Core/GamePerfLab.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests_csharp/">
+    <Project Path="tests_csharp/GamePerfLab.Tests/GamePerfLab.Tests.csproj" />
+  </Folder>
+</Solution>

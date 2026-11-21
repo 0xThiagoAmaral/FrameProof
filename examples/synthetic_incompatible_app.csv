@@ -1,0 +1,12 @@
+Application,ProcessID,SwapChainAddress,MsBetweenPresents
+other_game.exe,300,0x03,0
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,4
+other_game.exe,300,0x03,8
+other_game.exe,300,0x03,20

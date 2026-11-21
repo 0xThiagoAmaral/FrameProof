@@ -1,0 +1,7 @@
+{
+    "dotnet.server.useOmnisharp": false,
+    "dotnet.defaultSolution": "GamePerfLab.slnx",
+    "csharp-dev-tools.solutionViewer.selectedWorkspaceSolutions": [
+        "GamePerfLab.slnx"
+    ]
+}
