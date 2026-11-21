@@ -1,0 +1,12 @@
+Application,ProcessID,SwapChainAddress,MsBetweenPresents
+demo.exe,100,0x01,0
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,4
+demo.exe,100,0x01,8
+demo.exe,100,0x01,20
